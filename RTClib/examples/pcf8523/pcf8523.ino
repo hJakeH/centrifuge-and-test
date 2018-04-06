@@ -1,31 +1,44 @@
 // Date and time functions using a DS1307 RTC connected via I2C and Wire lib
-// 2010-02-04 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
-
-// contributed by @mariusster, see http://forum.jeelabs.net/comment/1902
-
 #include <Wire.h>
-#include <RTClib.h>
+#include "RTClib.h"
 
-RTC_PCF8563 RTC;
+RTC_PCF8523 rtc;
+
+char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 void setup () {
-    Serial.begin(57600);
-    Wire.begin();
-    RTC.begin();
-    
+
+  while (!Serial) {
+    delay(1);  // for Leonardo/Micro/Zero
+  }
+
+  Serial.begin(57600);
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
+
+  if (! rtc.initialized()) {
+    Serial.println("RTC is NOT running!");
     // following line sets the RTC to the date & time this sketch was compiled
-    RTC.adjust(DateTime(__DATE__, __TIME__));
+    // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // This line sets the RTC with an explicit date & time, for example to set
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+  }
 }
 
 void loop () {
-    DateTime now = RTC.now();
+    DateTime now = rtc.now();
     
     Serial.print(now.year(), DEC);
     Serial.print('/');
     Serial.print(now.month(), DEC);
     Serial.print('/');
     Serial.print(now.day(), DEC);
-    Serial.print(' ');
+    Serial.print(" (");
+    Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+    Serial.print(") ");
     Serial.print(now.hour(), DEC);
     Serial.print(':');
     Serial.print(now.minute(), DEC);
@@ -33,14 +46,14 @@ void loop () {
     Serial.print(now.second(), DEC);
     Serial.println();
     
-    Serial.print(" since 2000 = ");
-    Serial.print(now.get());
+    Serial.print(" since midnight 1/1/1970 = ");
+    Serial.print(now.unixtime());
     Serial.print("s = ");
-    Serial.print(now.get() / 86400L);
+    Serial.print(now.unixtime() / 86400L);
     Serial.println("d");
     
-    // calculate a date which is 7 days and 30 seconds into the future
-    DateTime future (now.get() + 7 * 86400L + 30);
+    // calculate a date which is 7 days, 12 hours and 30 seconds into the future
+    DateTime future (now + TimeSpan(7,12,30,6));
     
     Serial.print(" now + 7d + 30s: ");
     Serial.print(future.year(), DEC);
