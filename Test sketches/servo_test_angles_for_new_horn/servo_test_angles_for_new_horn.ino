@@ -13,13 +13,13 @@ void loop() {
   int press1 = digitalRead(button1);
   if (press1 == LOW) {
     noInterrupts();
-    servo.write(4);
+    servo.write(175);
     //  delay(3000);
     interrupts();
     Serial.print("MARK");
   }
   else {
-    servo.write(91);
+    servo.write(100);
   }
 }
 
