@@ -1,0 +1,5 @@
+The way I did links previously was stupid. Here is a better format. Sorry about that.
+
+1. https://www.arduino.cc/en/Main/Software
+2. https://forum.pololu.com/t/magnetic-quadrature-encoders-cpr-12/11397
+3. 
