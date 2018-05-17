@@ -1,0 +1,1 @@
+change the variable rpm_Det to set rpm at which servo turns
